@@ -1,0 +1,23 @@
+<section class="summary card" *ngIf="schema() as activeSchema">
+  <div class="summary__hero" aria-hidden="true">🧁</div>
+  <h1 class="summary__title">Awesome!</h1>
+  <p class="summary__subtitle">Your {{ activeSchema.title | lowercase }} has been submitted.</p>
+
+  <div class="summary__table">
+    <h2 class="summary__table-title">Summary</h2>
+    <dl class="summary__list">
+      <ng-container *ngFor="let section of activeSchema.sections">
+        <div class="summary__row" *ngFor="let field of section.fields">
+          <dt>{{ field.label }}</dt>
+          <dd *ngIf="displayValue(field) as value; else notAnswered">{{ value }}</dd>
+        </div>
+      </ng-container>
+    </dl>
+  </div>
+
+  <ng-template #notAnswered>
+    <dd class="summary__empty">not answered</dd>
+  </ng-template>
+
+  <button type="button" class="btn btn--primary summary__cta" (click)="createNewRequest()">Create New Request</button>
+</section>
