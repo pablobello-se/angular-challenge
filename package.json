@@ -11,7 +11,9 @@
     "lint:fix": "ng lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "check": "npm run format:check && npm run lint && npm run test:ci && npm run build"
   },
   "lint-staged": {
     "*.{ts,html}": [
