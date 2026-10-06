@@ -62,6 +62,12 @@
     margin: 4px 0 14px;
   }
 
+  &__error {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--color-danger);
+  }
+
   &__actions {
     display: flex;
     align-items: center;

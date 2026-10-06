@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, ElementRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -39,6 +39,8 @@ export class RequestFormComponent implements OnInit {
   form = new UntypedFormGroup({});
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   get isLastSection(): boolean {
     const schema = this.schema();
@@ -151,6 +153,7 @@ export class RequestFormComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.forceShowErrors.set(true);
+      this.focusFirstInvalidField();
       return;
     }
 
@@ -163,5 +166,14 @@ export class RequestFormComponent implements OnInit {
     }
 
     this.router.navigate(['/request', schema.id, 'section', this.sectionIndex() + 1]);
+  }
+
+  /** Points the user at the first error, which may be off-screen on long sections. */
+  private focusFirstInvalidField(): void {
+    // Render the error state first so the `.field--invalid` markers exist in the DOM.
+    this.cdr.detectChanges();
+    const input = this.host.nativeElement.querySelector<HTMLInputElement>('.field--invalid input');
+    input?.focus({ preventScroll: true });
+    input?.closest('.field')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }

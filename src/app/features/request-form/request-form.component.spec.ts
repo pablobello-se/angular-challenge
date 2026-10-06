@@ -50,11 +50,25 @@ describe('RequestFormComponent', () => {
   });
 
   it('blocks "Next" and highlights errors while the section is invalid', () => {
+    expect(submitButton().getAttribute('aria-disabled')).toBe('true');
+
     submitButton().click();
     fixture.detectChanges();
 
+    const el: HTMLElement = fixture.nativeElement;
     expect(router.navigate).not.toHaveBeenCalled();
     expect(el.querySelectorAll('.field--invalid').length).toBe(2);
+    expect(el.querySelector('[role="alert"]')?.textContent).toContain('fix the highlighted fields');
+    expect(document.activeElement).toBe(el.querySelector('.field--invalid input'));
+  });
+
+  it('unblocks "Next" as soon as the section becomes valid', () => {
+    for (const field of requestedItem.fields) {
+      component.form.get(String(field.id))!.setValue(field.type === 'number' ? 3 : 'Figma');
+    }
+    fixture.detectChanges();
+
+    expect(submitButton().getAttribute('aria-disabled')).toBe('false');
   });
 
   it('flags a non-numeric quantity as invalid', () => {

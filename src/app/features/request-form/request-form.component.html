@@ -30,11 +30,17 @@
       (retry)="retryField(field)"
     ></app-dynamic-field>
 
+    <p class="request-form__error" role="alert" *ngIf="forceShowErrors() && form.invalid">
+      Please fix the highlighted fields to continue.
+    </p>
+
     <div class="request-form__actions">
       <button type="button" class="btn btn--secondary btn--caps" (click)="goPrevious()" *ngIf="sectionIndex() > 0">
         Previous
       </button>
-      <button type="submit" class="btn btn--primary btn--caps">
+      <!-- Blocked via aria-disabled instead of [disabled]: a disabled button can't be clicked,
+           so we could never show the user *where* the errors are. -->
+      <button type="submit" class="btn btn--primary btn--caps" [attr.aria-disabled]="form.invalid">
         {{ isLastSection ? 'Submit' : 'Next' }}
       </button>
     </div>
