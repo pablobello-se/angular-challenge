@@ -1,0 +1,57 @@
+<div class="field card" [class.field--invalid]="showError">
+  <div class="field__header">
+    <label
+      class="field__label"
+      [attr.for]="field.type === 'radio' ? null : 'field-' + field.id"
+      [id]="'field-' + field.id + '-label'"
+    >
+      {{ field.label }}
+      <span class="field__required" *ngIf="field.required" aria-hidden="true">*</span>
+    </label>
+    <app-save-indicator [status]="saveStatus" (retry)="retry.emit()"></app-save-indicator>
+  </div>
+
+  <ng-container [ngSwitch]="field.type">
+    <input
+      *ngSwitchCase="'text'"
+      [id]="'field-' + field.id"
+      type="text"
+      class="field__input"
+      [formControl]="control"
+      [attr.aria-invalid]="showError"
+    />
+
+    <input
+      *ngSwitchCase="'number'"
+      [id]="'field-' + field.id"
+      type="number"
+      class="field__input"
+      [formControl]="control"
+      [attr.aria-invalid]="showError"
+    />
+
+    <div
+      *ngSwitchCase="'radio'"
+      class="field__radio-group"
+      role="radiogroup"
+      [attr.aria-labelledby]="'field-' + field.id + '-label'"
+    >
+      <label
+        class="field__radio-option"
+        [class.field__radio-option--checked]="control.value === option"
+        *ngFor="let option of field.options"
+      >
+        <input type="radio" [name]="'field-' + field.id" [value]="option" [formControl]="control" />
+        <span>{{ option }}</span>
+      </label>
+    </div>
+
+    <label *ngSwitchCase="'toggle'" class="field__toggle" [class.field__toggle--on]="control.value">
+      <input type="checkbox" role="switch" [id]="'field-' + field.id" [formControl]="control" />
+      <span class="field__toggle-track" aria-hidden="true"><span class="field__toggle-thumb"></span></span>
+      <span class="field__toggle-text">{{ control.value ? 'Yes' : 'No' }}</span>
+    </label>
+  </ng-container>
+
+  <p class="field__error" *ngIf="showError">{{ errorMessage }}</p>
+</div>
