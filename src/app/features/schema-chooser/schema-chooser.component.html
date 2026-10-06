@@ -1,0 +1,42 @@
+<section class="chooser card">
+  <h1 class="chooser__title">What do you need to purchase?</h1>
+
+  <ng-container *ngIf="!loading(); else loadingTpl">
+    <div class="chooser__options" role="radiogroup" aria-label="Request type">
+      <button
+        *ngFor="let schema of schemas()"
+        type="button"
+        role="radio"
+        class="chooser__option"
+        [class.chooser__option--selected]="selected()?.id === schema.id"
+        [attr.aria-checked]="selected()?.id === schema.id"
+        (click)="selected.set(schema)"
+      >
+        <ng-container [ngSwitch]="iconFor(schema)">
+          <!-- Hardware: chip -->
+          <svg *ngSwitchCase="'hardware'" class="chooser__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="6" width="12" height="12" rx="2" />
+            <rect x="9.5" y="9.5" width="5" height="5" rx="0.5" />
+            <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" />
+          </svg>
+          <!-- Software (and default): app grid -->
+          <svg *ngSwitchDefault class="chooser__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="4" width="6.5" height="6.5" rx="1" />
+            <rect x="13.5" y="4" width="6.5" height="6.5" rx="1" />
+            <rect x="4" y="13.5" width="6.5" height="6.5" rx="1" />
+            <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1" />
+          </svg>
+        </ng-container>
+        {{ optionLabel(schema) }}
+      </button>
+    </div>
+
+    <button type="button" class="btn btn--primary chooser__start" [disabled]="!selected()" (click)="start()">
+      Start
+    </button>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <p class="chooser__loading">Loading…</p>
+  </ng-template>
+</section>
