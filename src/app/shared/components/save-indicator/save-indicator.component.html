@@ -1,0 +1,5 @@
+<span class="save-indicator" [class]="'save-indicator--' + status" *ngIf="status && status !== 'idle'">
+  <span class="dot" aria-hidden="true"></span>
+  {{ label }}
+  <button *ngIf="status === 'error'" type="button" class="retry-link" (click)="retry.emit()">Retry</button>
+</span>
