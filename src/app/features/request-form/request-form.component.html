@@ -1,0 +1,48 @@
+<div class="request-form" *ngIf="schema() as activeSchema">
+  <nav class="request-form__nav" [attr.aria-label]="activeSchema.title + ' sections'">
+    <button
+      *ngFor="let s of activeSchema.sections; let i = index"
+      type="button"
+      class="request-form__nav-item"
+      [class.request-form__nav-item--active]="i === sectionIndex()"
+      [disabled]="i > sectionIndex()"
+      [attr.aria-current]="i === sectionIndex() ? 'step' : null"
+      (click)="goToSection(i)"
+    >
+      {{ s.title }}
+    </button>
+  </nav>
+
+  <form
+    class="request-form__content"
+    [formGroup]="form"
+    *ngIf="section() as activeSection"
+    (ngSubmit)="goNextOrSubmit()"
+  >
+    <h1 class="request-form__section-title">{{ activeSection.title }}</h1>
+
+    <app-dynamic-field
+      *ngFor="let field of activeSection.fields"
+      [field]="field"
+      [control]="fieldControl(field)"
+      [saveStatus]="saveStatusFor(field)"
+      [forceShowErrors]="forceShowErrors()"
+      (retry)="retryField(field)"
+    ></app-dynamic-field>
+
+    <p class="request-form__error" role="alert" *ngIf="forceShowErrors() && form.invalid">
+      Please fix the highlighted fields to continue.
+    </p>
+
+    <div class="request-form__actions">
+      <button type="button" class="btn btn--secondary btn--caps" (click)="goPrevious()" *ngIf="sectionIndex() > 0">
+        Previous
+      </button>
+      <!-- Blocked via aria-disabled instead of [disabled]: a disabled button can't be clicked,
+           so we could never show the user *where* the errors are. -->
+      <button type="submit" class="btn btn--primary btn--caps" [attr.aria-disabled]="form.invalid">
+        {{ isLastSection ? 'Submit' : 'Next' }}
+      </button>
+    </div>
+  </form>
+</div>
